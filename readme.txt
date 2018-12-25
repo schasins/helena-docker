@@ -5,3 +5,7 @@ docker run -t -p 5900:5900 -e VNC_SERVER_PASSWORD=password --user apps --privile
 docker build -t local/chrome:0.0.1 .
 
 docker kill $(docker ps -q)
+
+docker save --output helena-image.tar local/chrome:0.0.1
+
+docker load --input helena-image.tar
