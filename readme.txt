@@ -9,3 +9,5 @@ docker kill $(docker ps -q)
 docker save --output helena-image.tar local/chrome:0.0.1
 
 docker load --input helena-image.tar
+
+wget https://github.com/schasins/helena-docker/raw/master/helena-image.tar
