@@ -121,15 +121,25 @@ class RunProgramProcess(Process):
 				try:
 					runScrapingProgramHelper(self.driver, self.programId, self.optionStr)
 					done = getWhetherDone(self.driver)
+					print "done:", done
 					self.driver.close()
 					self.driver.quit()
+					self.numTriesSoFar = 0
 				except Exception as e:
-						# assume we can just recover by trying again
-						if (self.numTriesSoFar < 3):
-								self.numTriesSoFar += 1
-								self.runInternals()
-						else:
-								logging.error(traceback.format_exc())
+					print "failed to connect, failure number", self.numTriesSoFar
+					self.numTriesSoFar += 1
+					# assume we can just recover by trying again
+					if (self.numTriesSoFar < 3):
+						time.sleep(.3)
+						self.runInternals()
+					if (self.numTriesSoFar < 10):
+						print "we'll make a new driver to try to recover"
+						# we've tried a few times without recovering.  shall we try making a new driver?
+						self.driver = newDriver(self.profile)
+						self.runInternals()
+					else:
+						# ok, it's been 10 tries, I give up
+						logging.error(traceback.format_exc())
 
 		def terminate(self):
 			try:
