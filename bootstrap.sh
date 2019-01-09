@@ -47,7 +47,7 @@ launch_xvfb() {
 }
 
 launch_window_manager() {
-    local timeout=${XVFB_TIMEOUT:-5}
+    local timeout=${XVFB_TIMEOUT:-15}
 
     # Start and wait for either fluxbox to be fully up or we hit the timeout.
     fluxbox &

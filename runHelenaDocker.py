@@ -44,7 +44,7 @@ if headless:
 	display = Display(visible=0, size=(800, 800))  
 	display.start()
 
-extensionkey = "ljfjmohmjeghnmkhmkbjfajbllgkachg"
+extensionkey = "nbhipdfeeblcocmpdijkpaeedbjeegoi"
 profilePath = "helenaProfile"
 
 def newDriver(profile):
