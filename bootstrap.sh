@@ -18,7 +18,7 @@ launch_xvfb() {
     if [ -f "${xvfbLockFilePath}" ]
     then
         log_i "Removing xvfb lock file '${xvfbLockFilePath}'..."
-        if ! rm -v "${xvfbLockFilePath}"
+        if ! rm -f -v "${xvfbLockFilePath}"
         then
             log_e "Failed to remove xvfb lock file"
             exit 1
