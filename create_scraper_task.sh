@@ -1,0 +1,127 @@
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+PROGRAM_ID="$1"
+[ $# -eq 0 ] && { echo "Usage: $0 program_id"; exit 1; }
+
+AWS_ACCOUNT_ID=042666389891
+REGION=us-west-2
+AMI_ID=ami-0054160a688deeb6a
+INSTANCE_TYPE=t2.xlarge
+MIN_MEM_MB=128
+CLUSTER_NAME=helena
+CLUSTER_SIZE=1
+KEY_PAIR=helena-server
+IMAGE_NAME=helena
+IMAGE_TAG=latest
+REPOSITORY_IMAGE_NAME=${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG}
+
+cat > /tmp/ecs-policy.json <<'EOF'
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+
+cat > /tmp/role-policy.json <<'EOF'
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:BatchGetImage",
+        "ecr:DescribeRepositories",
+        "ecr:GetAuthorizationToken",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:GetRepositoryPolicy",
+        "ecr:ListImages",
+        "ecs:CreateCluster",
+        "ecs:DeregisterContainerInstance",
+        "ecs:DiscoverPollEndpoint",
+        "ecs:Poll",
+        "ecs:RegisterContainerInstance",
+        "ecs:StartTask",
+        "ecs:StartTelemetrySession",
+        "ecs:SubmitContainerStateChange",
+        "ecs:SubmitTaskStateChange"
+      ],
+      "Resource": [
+        "*"
+      ]
+    }
+  ]
+}
+EOF
+
+cat > /tmp/user-data.sh <<EOF
+#!/bin/bash
+echo 'ECS_CLUSTER=$CLUSTER_NAME' >> /etc/ecs/ecs.config
+EOF
+
+cat > /tmp/task-definition.json <<EOF
+{
+  "family": "${CLUSTER_NAME}_${PROGRAM_ID}",
+  "containerDefinitions": [
+    {
+      "image": "$REPOSITORY_IMAGE_NAME",
+      "name": "helena",
+      "memoryReservation": $MIN_MEM_MB,
+      "cpu": 0,
+      "portMappings": [
+        {
+          "containerPort": 5900,
+          "hostPort": 5900
+        }
+      ],
+      "essential": true,
+      "privileged": true,
+      "user": "apps",
+      "environment" : [
+        { "name" : "VNC_SERVER_PASSWORD", "value" : "password" },
+        { "name" : "HELENA_PROGRAM_ID", "value" : "$PROGRAM_ID" },
+        { "name" : "NUM_PARALLEL_WORKERS", "value" : "1" },
+        { "name" : "TIME_LIMIT_IN_HOURS", "value" : "23" },
+        { "name" : "NUM_RUNS_ALLOWED_PER_WORKER", "value" : "1" }
+      ]
+    }
+  ]
+}
+EOF
+
+aws --region $REGION ecr create-repository --repository-name $IMAGE_NAME
+docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+DOCKER_LOGIN=$(aws --region $REGION ecr get-login --no-include-email)
+eval "$DOCKER_LOGIN"
+IMAGE_ID=$(docker images | grep "$IMAGE_NAME" | awk '{print $3}' | head -1)
+docker tag $IMAGE_ID $REPOSITORY_IMAGE_NAME
+docker push $REPOSITORY_IMAGE_NAME
+
+# if cluster doesn't exist, create it
+CLUSTER_RESP=$(aws --region $REGION ecs describe-clusters --cluster $CLUSTER_NAME)
+if [[ "$CLUSTER_RESP" == *"MISSING"* ]]; then
+  aws --region $REGION iam create-role --role-name ecsRole --assume-role-policy-document file:///tmp/ecs-policy.json
+  aws --region $REGION iam put-role-policy --role-name ecsRole --policy-name ecsRolePolicy --policy-document file:///tmp/role-policy.json
+  aws --region $REGION iam create-instance-profile --instance-profile-name ecsRole
+  aws --region $REGION iam add-role-to-instance-profile --instance-profile-name ecsRole --role-name ecsRole
+  aws --region $REGION ec2 describe-security-groups
+  SGID_RESP=$(aws --region $REGION ec2 create-security-group --group-name $CLUSTER_NAME --description $CLUSTER_NAME)
+  GROUP_ID=$(perl -ne 'if (/"GroupId": "([^"]+)"/) { print $1; }' <<< $SGID_RESP)
+  aws --region $REGION ec2 authorize-security-group-ingress --group-id $GROUP_ID --protocol tcp --port 22 --cidr 0.0.0.0/0
+  aws --region $REGION ec2 authorize-security-group-ingress --group-id $GROUP_ID --protocol tcp --port 80 --cidr 0.0.0.0/0
+  aws --region $REGION ecs create-cluster --cluster-name $CLUSTER_NAME
+  aws --region $REGION ec2 run-instances --count $CLUSTER_SIZE --image-id $AMI_ID --instance-type $INSTANCE_TYPE --key-name $KEY_PAIR --iam-instance-profile Name=ecsRole --security-group-id $GROUP_ID --associate-public-ip-address --user-data file:///tmp/user-data.sh
+fi
+
+aws --region $REGION ecs register-task-definition --cli-input-json file:///tmp/task-definition.json
+aws --region $REGION ecs run-task --cluster $CLUSTER_NAME --count 1 --task-definition ${CLUSTER_NAME}_${PROGRAM_ID}
