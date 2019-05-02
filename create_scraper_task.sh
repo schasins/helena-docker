@@ -124,7 +124,7 @@ cat > /tmp/task-definition.json <<EOF
 }
 EOF
 
-aws --region $REGION ecr create-repository --repository-name $IMAGE_NAME
+aws --region $REGION ecr create-repository --repository-name $IMAGE_NAME || true
 docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
 DOCKER_LOGIN=$(aws --region $REGION ecr get-login --no-include-email)
 eval "$DOCKER_LOGIN"
@@ -134,7 +134,7 @@ docker push $REPOSITORY_IMAGE_NAME
 
 # if cluster doesn't exist, create it
 CLUSTER_RESP=$(aws --region $REGION ecs describe-clusters --cluster $CLUSTER_NAME)
-if [[ "$CLUSTER_RESP" == *"MISSING"* ]]; then
+if [[ "$CLUSTER_RESP" == *"MISSING"* || "$CLUSTER_RESP" == *"INACTIVE"* ]]; then
   aws --region $REGION iam create-role --role-name ecsRole --assume-role-policy-document file:///tmp/ecs-policy.json
   aws --region $REGION iam put-role-policy --role-name ecsRole --policy-name ecsRolePolicy --policy-document file:///tmp/role-policy.json
   aws --region $REGION iam create-instance-profile --instance-profile-name ecsRole
