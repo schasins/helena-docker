@@ -7,7 +7,6 @@ PROGRAM_ID="$1"
 
 AWS_ACCOUNT_ID=042666389891
 REGION=us-west-2
-AMI_ID=ami-0054160a688deeb6a
 INSTANCE_TYPE=t2.xlarge
 MIN_MEM_MB=128
 CLUSTER_NAME=helena
@@ -16,6 +15,32 @@ KEY_PAIR=helena-server
 IMAGE_NAME=helena
 IMAGE_TAG=latest
 REPOSITORY_IMAGE_NAME=${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG}
+
+# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI_launch_latest.html
+# workaround for no associative arrays in bash 3: https://stackoverflow.com/a/22151682/6837245
+region2ami() {
+    case $1 in
+        'us-east-2') echo 'ami-00cffcd24cb08edf1';;
+        'us-east-1') echo 'ami-0bc08634af113cccb';;
+        'us-west-1') echo 'ami-05cc68a00d392447a';;
+        'us-west-2') echo 'ami-0054160a688deeb6a';;
+        'ap-east-1') echo 'ami-087f0e5fc12e0bc43';;
+        'ap-northeast-1') echo 'ami-00f839709b07ffb58';;
+        'ap-northeast-2') echo 'ami-0470f8828abe82a87';;
+        'ap-south-1') echo 'ami-0d143ad35f29ad632';;
+        'ap-southeast-1') echo 'ami-0c5b69a05af2f0e23';;
+        'ap-southeast-2') echo 'ami-011ce3fbe73731dfe';;
+        'ca-central-1') echo 'ami-039a05a64b90f63ee';;
+        'eu-central-1') echo 'ami-0ab1db011871746ef';;
+        'eu-north-1') echo 'ami-036cf93383aba5279';;
+        'eu-west-1') echo 'ami-09cd8db92c6bf3a84';;
+        'eu-west-2') echo 'ami-016a20f0624bae8c5';;
+        'eu-west-3') echo 'ami-0b4b8274f0c0d3bac';;
+        'sa-east-1') echo 'ami-04e333c875fae9d77';;
+    esac
+}
+
+AMI_ID=$(region2ami $REGION)
 
 cat > /tmp/ecs-policy.json <<'EOF'
 {
