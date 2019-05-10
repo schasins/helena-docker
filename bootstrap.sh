@@ -87,11 +87,11 @@ run_vnc_server() {
 
 run_chrome() {
     local progid=${HELENA_PROGRAM_ID:-2356}
-    local numworkers=${NUM_PARALLEL_WORKERS:-1}
+    local runid=${HELENA_RUN_ID}
     local timelimit=${TIME_LIMIT_IN_HOURS:-23}
     local numruns=${NUM_RUNS_ALLOWED_PER_WORKER:-1}
     google-chrome --version
-    python runHelenaDocker.py ${progid} ${numworkers} ${timelimit} ${numruns} &
+    python runHelenaDocker.py ${progid} ${runid} ${timelimit} ${numruns} &
 }
 
 log_i() {
