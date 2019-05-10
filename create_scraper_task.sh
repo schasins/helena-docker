@@ -142,21 +142,21 @@ IMAGE_ID=$(docker images | grep "$IMAGE_NAME" | awk '{print $3}' | head -1)
 docker tag $IMAGE_ID $REPOSITORY_IMAGE_NAME
 docker push $REPOSITORY_IMAGE_NAME
 
-# # if cluster doesn't exist, create it
-# CLUSTER_RESP=$(aws --region $REGION ecs describe-clusters --cluster $CLUSTER_NAME)
-# if [[ "$CLUSTER_RESP" == *"MISSING"* || "$CLUSTER_RESP" == *"INACTIVE"* ]]; then
-#   aws --region $REGION iam create-role --role-name ecsRole --assume-role-policy-document file:///tmp/ecs-policy.json
-#   aws --region $REGION iam put-role-policy --role-name ecsRole --policy-name ecsRolePolicy --policy-document file:///tmp/role-policy.json
-#   aws --region $REGION iam create-instance-profile --instance-profile-name ecsRole
-#   aws --region $REGION iam add-role-to-instance-profile --instance-profile-name ecsRole --role-name ecsRole
-#   aws --region $REGION ec2 describe-security-groups
-#   SGID_RESP=$(aws --region $REGION ec2 create-security-group --group-name $CLUSTER_NAME --description $CLUSTER_NAME)
-#   GROUP_ID=$(perl -ne 'if (/"GroupId": "([^"]+)"/) { print $1; }' <<< $SGID_RESP)
-#   aws --region $REGION ec2 authorize-security-group-ingress --group-id $GROUP_ID --protocol tcp --port 22 --cidr 0.0.0.0/0
-#   aws --region $REGION ec2 authorize-security-group-ingress --group-id $GROUP_ID --protocol tcp --port 80 --cidr 0.0.0.0/0
-#   aws --region $REGION ecs create-cluster --cluster-name $CLUSTER_NAME
-#   aws --region $REGION ec2 run-instances --count $CLUSTER_SIZE --image-id $AMI_ID --instance-type $INSTANCE_TYPE --key-name $KEY_PAIR --iam-instance-profile Name=ecsRole --security-group-id $GROUP_ID --associate-public-ip-address --user-data file:///tmp/user-data.sh
-# fi
+# if cluster doesn't exist, create it
+CLUSTER_RESP=$(aws --region $REGION ecs describe-clusters --cluster $CLUSTER_NAME)
+if [[ "$CLUSTER_RESP" == *"MISSING"* || "$CLUSTER_RESP" == *"INACTIVE"* ]]; then
+  aws --region $REGION iam create-role --role-name ecsRole --assume-role-policy-document file:///tmp/ecs-policy.json
+  aws --region $REGION iam put-role-policy --role-name ecsRole --policy-name ecsRolePolicy --policy-document file:///tmp/role-policy.json
+  aws --region $REGION iam create-instance-profile --instance-profile-name ecsRole
+  aws --region $REGION iam add-role-to-instance-profile --instance-profile-name ecsRole --role-name ecsRole
+  aws --region $REGION ec2 describe-security-groups
+  SGID_RESP=$(aws --region $REGION ec2 create-security-group --group-name $CLUSTER_NAME --description $CLUSTER_NAME)
+  GROUP_ID=$(perl -ne 'if (/"GroupId": "([^"]+)"/) { print $1; }' <<< $SGID_RESP)
+  aws --region $REGION ec2 authorize-security-group-ingress --group-id $GROUP_ID --protocol tcp --port 22 --cidr 0.0.0.0/0
+  aws --region $REGION ec2 authorize-security-group-ingress --group-id $GROUP_ID --protocol tcp --port 80 --cidr 0.0.0.0/0
+  aws --region $REGION ecs create-cluster --cluster-name $CLUSTER_NAME
+  aws --region $REGION ec2 run-instances --count $CLUSTER_SIZE --image-id $AMI_ID --instance-type $INSTANCE_TYPE --key-name $KEY_PAIR --iam-instance-profile Name=ecsRole --security-group-id $GROUP_ID --associate-public-ip-address --user-data file:///tmp/user-data.sh
+fi
 
 aws --region $REGION ecs register-task-definition --cli-input-json file:///tmp/task-definition.json
 # we can only launch up to 10 tasks at a time
