@@ -24,10 +24,11 @@ import json
 import os.path
 import time
 
-scriptName = int(sys.argv[1])
-helenaRunId = int(sys.argv[2])
-timeoutInHours = float(sys.argv[3])
-howManyRunsToAllowPerWorker = int(sys.argv[4])
+extensionKey = sys.argv[1]
+scriptName = int(sys.argv[2])
+helenaRunId = int(sys.argv[3])
+timeoutInHours = float(sys.argv[4])
+howManyRunsToAllowPerWorker = int(sys.argv[5])
 
 debug = False
 headless = False
@@ -36,9 +37,6 @@ if headless:
     from pyvirtualdisplay import Display
     display = Display(visible=0, size=(800, 800))
     display.start()
-
-extensionkey = "nbhipdfeeblcocmpdijkpaeedbjeegoi"
-profilePath = "helenaProfile"
 
 
 def newDriver(profile):
@@ -50,7 +48,7 @@ def newDriver(profile):
 
     driver = webdriver.Chrome(
         chrome_options=chrome_options, desired_capabilities=desired)
-    driver.get("chrome-extension://" + extensionkey + "/pages/mainpanel.html")
+    driver.get("chrome-extension://" + extensionKey + "/pages/mainpanel.html")
     time.sleep(20)
     return driver
 
