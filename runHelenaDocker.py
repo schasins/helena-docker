@@ -30,7 +30,7 @@ helenaRunId = int(sys.argv[3])
 timeoutInHours = float(sys.argv[4])
 howManyRunsToAllowPerWorker = int(sys.argv[5])
 
-debug = False
+debug = bool(os.environ.get('DEBUG'))
 headless = False
 
 if headless:
