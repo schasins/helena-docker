@@ -191,7 +191,7 @@ def oneRun(programId, runId, timeoutInSeconds):
 
 
 def main():
-    oneRun([scriptName], helenaRunId, int(timeoutInHours * 60 * 60))
+    oneRun(scriptName, helenaRunId, int(timeoutInHours * 60 * 60))
 
 
 main()
