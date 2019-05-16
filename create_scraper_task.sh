@@ -115,7 +115,7 @@ cat > /tmp/task-definition.json <<EOF
       "user": "apps",
       "environment" : [
         { "name" : "VNC_SERVER_PASSWORD", "value" : "password" },
-        { "name" : "HELENA_EXTENSION_ID", "value" : "lcbiilabdehakhehpnhaaajlmkifhhpa" },
+        { "name" : "HELENA_EXTENSION_ID", "value" : "gjkgcoancobmmaipihkjihlbgccpednm" },
         { "name" : "HELENA_PROGRAM_ID", "value" : "$PROGRAM_ID" },
         { "name" : "HELENA_RUN_ID", "value" : "$RUN_ID" },
         { "name" : "TIME_LIMIT_IN_HOURS", "value" : "23" },
