@@ -6,6 +6,7 @@ PROGRAM_ID="$1"
 NUM_WORKERS="$2"
 [ $# -eq 0 ] && { echo "Usage: $0 program_id num_workers"; exit 1; }
 
+EXTENSION_ID=hnmkbkpdcgmppiijikenffinfpjagdjb
 HELENA_SERVER_URL=http://helena-server-puma.us-west-2.elasticbeanstalk.com
 AWS_ACCOUNT_ID=042666389891
 REGION=us-west-2
@@ -115,7 +116,7 @@ cat > /tmp/task-definition.json <<EOF
       "user": "apps",
       "environment" : [
         { "name" : "VNC_SERVER_PASSWORD", "value" : "password" },
-        { "name" : "HELENA_EXTENSION_ID", "value" : "gjkgcoancobmmaipihkjihlbgccpednm" },
+        { "name" : "HELENA_EXTENSION_ID", "value" : "$EXTENSION_ID" },
         { "name" : "HELENA_PROGRAM_ID", "value" : "$PROGRAM_ID" },
         { "name" : "HELENA_RUN_ID", "value" : "$RUN_ID" },
         { "name" : "TIME_LIMIT_IN_HOURS", "value" : "23" },
