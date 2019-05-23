@@ -44,7 +44,7 @@ region2ami() {
 }
 
 AMI_ID=$(region2ami $REGION)
-RUN_ID=$(curl -v -X POST ${HELENA_SERVER_URL}/newprogramrun | perl -ne '/"run_id":(\d+)/; print $1')
+RUN_ID=$(curl -v -H "Content-Type: application/json" -d "{\"name\":\"ECS_${PROGRAM_ID}_${NUM_WORKERS}\", \"program_id\":${PROGRAM_ID}}" -X POST "${HELENA_SERVER_URL}/newprogramrun" | perl -ne '/"run_id":(\d+)/; print $1')
 
 cat > /tmp/ecs-policy.json <<'EOF'
 {
