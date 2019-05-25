@@ -126,7 +126,8 @@ cat > /tmp/task-definition.json <<EOF
         { "name" : "HELENA_PROGRAM_ID", "value" : "$PROGRAM_ID" },
         { "name" : "HELENA_RUN_ID", "value" : "$RUN_ID" },
         { "name" : "TIME_LIMIT_IN_HOURS", "value" : "23" },
-        { "name" : "NUM_RUNS_ALLOWED_PER_WORKER", "value" : "1" }
+        { "name" : "NUM_RUNS_ALLOWED_PER_WORKER", "value" : "1" },
+        { "name" : "DEBUG", "value" : "1" }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
