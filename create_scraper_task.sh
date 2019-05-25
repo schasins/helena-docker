@@ -105,6 +105,7 @@ EOF
 cat > /tmp/task-definition.json <<EOF
 {
   "family": "${CLUSTER_NAME}_${PROGRAM_ID}",
+  "networkMode": "bridge",
   "containerDefinitions": [
     {
       "image": "$REPOSITORY_IMAGE_NAME",
@@ -114,6 +115,11 @@ cat > /tmp/task-definition.json <<EOF
       "essential": true,
       "privileged": true,
       "user": "apps",
+      "portMappings": [
+        {
+          "containerPort": 5900
+        }
+      ],
       "environment" : [
         { "name" : "VNC_SERVER_PASSWORD", "value" : "password" },
         { "name" : "HELENA_EXTENSION_ID", "value" : "$EXTENSION_ID" },
