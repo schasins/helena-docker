@@ -6,7 +6,7 @@ PROGRAM_ID="$1"
 NUM_WORKERS="$2"
 [ $# -eq 0 ] && { echo "Usage: $0 program_id num_workers"; exit 1; }
 
-EXTENSION_ID=hnmkbkpdcgmppiijikenffinfpjagdjb
+EXTENSION_ID=khjmjgndbklcflgokmgdjigioindpodn
 HELENA_SERVER_URL=http://helena-server-puma.us-west-2.elasticbeanstalk.com
 AWS_ACCOUNT_ID=042666389891
 REGION=us-west-2

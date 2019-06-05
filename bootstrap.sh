@@ -92,6 +92,7 @@ run_chrome() {
     local timelimit=${TIME_LIMIT_IN_HOURS:-23}
     local numruns=${NUM_RUNS_ALLOWED_PER_WORKER:-1}
     google-chrome --version
+    echo Extension ID: $extensionid
     python runHelenaDocker.py ${extensionid} ${progid} ${runid} ${timelimit} ${numruns} &
 }
 
