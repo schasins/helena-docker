@@ -1,0 +1,12 @@
+certifi==2018.11.29
+chardet==3.0.4
+EasyProcess==0.2.5
+idna==2.8
+numpy==1.15.4
+pip==8.1.1
+PyVirtualDisplay==0.2.1
+requests==2.21.0
+selenium==3.141.0
+setuptools==20.7.0
+urllib3==1.24.1
+wheel==0.29.0

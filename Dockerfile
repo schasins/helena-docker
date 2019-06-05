@@ -35,13 +35,11 @@ RUN apt-get -yqq update && \
 
 # and the libraries we need
 
-RUN pip install selenium
-RUN pip install requests
-RUN pip install numpy
-RUN pip install pyvirtualdisplay
+COPY requirements.txt /
+RUN pip install -r /requirements.txt
 
-RUN apt-get update && apt-get clean && apt-get install -y \
-    emacs
+# RUN apt-get update && apt-get clean && apt-get install -y \
+#     emacs
 
 # download helena sources and generate CRX file
 
