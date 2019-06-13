@@ -34,7 +34,7 @@ try:
 except IndexError:
 	helenaRunId = None
 else:
-	helenaRunId = sys.argv[6]
+	helenaRunId = sys.argv[5]
 
 debug = False
 headless = False
@@ -44,7 +44,7 @@ if headless:
 	display = Display(visible=0, size=(800, 800))  
 	display.start()
 
-extensionkey = "nbhipdfeeblcocmpdijkpaeedbjeegoi"
+extensionkey = "nmbalbaoknapelgdocfblckpfikdihgl"
 profilePath = "helenaProfile"
 
 def newDriver(profile):
