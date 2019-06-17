@@ -1,18 +1,26 @@
 Quick start guide:
 
-No need to even clone this repository!
+No need to even download or clone this repository!
 
 (1) If not yet installed, install docker: https://www.docker.com/get-started
 
-(2) Download the image tar, for example: wget https://github.com/schasins/helena-docker/raw/master/helena-image.tar
+(2) Start the program with the run command, for example: docker run -t -p 5900:5900 -e VNC_SERVER_PASSWORD=password -e HELENA_PROGRAM_ID=2357 -e TIME_LIMIT_IN_HOURS=23 -e NUM_RUNS_ALLOWED_PER_WORKER=1 --user apps --privileged schasins/helena:latest
 
-(3) Run the load command to load the tar: docker load --input helena-image.tar
+Alternative quick start guide if you need to run a parallelized Helena program:
 
-(4) Start the program with the run command, for example: docker run -t -p 5900:5900 -e VNC_SERVER_PASSWORD=password -e HELENA_PROGRAM_ID=2357 -e NUM_PARALLEL_WORKERS=1 -e TIME_LIMIT_IN_HOURS=23 -e NUM_RUNS_ALLOWED_PER_WORKER=1 --user apps --privileged local/helena:0.0.1
+(1) If not yet installed, install docker: https://www.docker.com/get-started
+
+(2) Install python 2.7: https://www.python.org/downloads/
+
+(3) Download the python script for starting parallel Dockers: wget https://github.com/schasins/helena-docker/raw/master/startHelenaDockers.py
+
+(4) Start the program with the run command, for example: python startHelenaDockers.py --id=3597
+
+(5) For help or for more information about options, including how to run with multiple parallel workers: python startHelenaDockers.py -h
 
 For developers:
 
-docker run -t -p 5900:5900 -e VNC_SERVER_PASSWORD=password -e HELENA_PROGRAM_ID=2357 -e NUM_PARALLEL_WORKERS=1 -e TIME_LIMIT_IN_HOURS=23 -e NUM_RUNS_ALLOWED_PER_WORKER=1 --user apps --privileged local/helena:0.0.1
+docker run -t -p 5900:5900 -e VNC_SERVER_PASSWORD=password -e HELENA_PROGRAM_ID=2357 -e TIME_LIMIT_IN_HOURS=23 -e NUM_RUNS_ALLOWED_PER_WORKER=1 --user apps --privileged local/helena:0.0.1
 
 docker build -t local/helena:0.0.1 .
 
@@ -23,3 +31,11 @@ docker save --output helena-image.tar local/helena:0.0.1
 docker load --input helena-image.tar
 
 wget https://github.com/schasins/helena-docker/raw/master/helena-image.tar
+
+To push a new version to Docker Hub:
+
+docker login --username <username> --password <password>
+
+docker tag local/helena:0.0.1 schasins/helena
+
+docker push schasins/helena

@@ -47,11 +47,14 @@ def newContainer(args, runid = False):
 		return
 	command = ["docker","run","-t","-p",str(i)+":"+str(i),"-e","VNC_SERVER_PASSWORD="+args.vncpass, \
 		"-e","HELENA_PROGRAM_ID="+str(args.id),"-e","TIME_LIMIT_IN_HOURS="+str(args.t),"-e", \
-		"NUM_RUNS_ALLOWED_PER_WORKER="+str(args.r),"--name",name,"--user","apps","--privileged","local/helena:0.0.1"]
+		"NUM_RUNS_ALLOWED_PER_WORKER="+str(args.r),"--name",name,"--user","apps","--privileged","schasins/helena:latest"]
 	if runid:
 		# add the run id
 		command = command[:-4] + ["-e","HELENA_RUN_ID="+str(runid)] + command[-4:]
-		print command
+	if args.local:
+		command[-1] = "local/helena:0.0.1"
+	print "----\nCOMMAND:"
+	print command
 	return name, command
 
 names = []
@@ -66,6 +69,8 @@ def main():
 	parser.add_argument('--n', help='The number of parallel workers you want to use for the Helena run', type=int, default=1)
 	parser.add_argument('--r', help='The number of runs of the Helena program you want to allow', type=int, default=1)
 	parser.add_argument('--t', help='The time limit in hours on dockers\' existence', type=int, default=99999)
+	parser.add_argument('--local', help='Whether to use a local Helena docker image instead of the Docker Hub image', action='store_true')
+	parser.set_defaults(local=False)
 
 	args=parser.parse_args()
 
