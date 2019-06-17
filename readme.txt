@@ -1,4 +1,6 @@
+--------------------------------------
 Quick start guide:
+--------------------------------------
 
 No need to even download or clone this repository!
 
@@ -6,7 +8,9 @@ No need to even download or clone this repository!
 
 (2) Start the program with the run command, for example: docker run -t -p 5900:5900 -e VNC_SERVER_PASSWORD=password -e HELENA_PROGRAM_ID=2357 -e TIME_LIMIT_IN_HOURS=23 -e NUM_RUNS_ALLOWED_PER_WORKER=1 --user apps --privileged schasins/helena:latest
 
+--------------------------------------
 Alternative quick start guide if you need to run a parallelized Helena program:
+--------------------------------------
 
 (1) If not yet installed, install docker: https://www.docker.com/get-started
 
@@ -18,7 +22,9 @@ Alternative quick start guide if you need to run a parallelized Helena program:
 
 (5) For help or for more information about options, including how to run with multiple parallel workers: python startHelenaDockers.py -h
 
+--------------------------------------
 For developers:
+--------------------------------------
 
 docker run -t -p 5900:5900 -e VNC_SERVER_PASSWORD=password -e HELENA_PROGRAM_ID=2357 -e TIME_LIMIT_IN_HOURS=23 -e NUM_RUNS_ALLOWED_PER_WORKER=1 --user apps --privileged local/helena:0.0.1
 
@@ -32,7 +38,9 @@ docker load --input helena-image.tar
 
 wget https://github.com/schasins/helena-docker/raw/master/helena-image.tar
 
+--------------------------------------
 To push a new version to Docker Hub:
+--------------------------------------
 
 docker login --username <username> --password <password>
 
