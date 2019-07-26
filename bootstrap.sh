@@ -7,10 +7,10 @@ main() {
     launch_xvfb
     log_i "Starting window manager..."
     launch_window_manager
-    log_i "Starting Chrome..."
-    run_chrome
     log_i "Starting VNC server..."
     run_vnc_server
+    log_i "Starting Chrome..."
+    run_chrome
 }
 
 launch_xvfb() {
@@ -65,24 +65,27 @@ launch_window_manager() {
 }
 
 run_vnc_server() {
+    local noVnc=${NO_VNC:-0}
     local passwordArgument='-nopw'
 
-    if [ -n "${VNC_SERVER_PASSWORD}" ]
+    if [ $noVnc -eq 0 ]
     then
-        local passwordFilePath="${HOME}/.x11vnc.pass"
-        if ! x11vnc -storepasswd "${VNC_SERVER_PASSWORD}" "${passwordFilePath}"
+        if [ -n "${VNC_SERVER_PASSWORD}" ]
         then
-            log_e "Failed to store x11vnc password"
-            exit 1
+            local passwordFilePath="${HOME}/.x11vnc.pass"
+            if ! x11vnc -storepasswd "${VNC_SERVER_PASSWORD}" "${passwordFilePath}"
+            then
+                log_e "Failed to store x11vnc password"
+                exit 1
+            fi
+            passwordArgument=-"-rfbauth ${passwordFilePath}"
+            log_i "The VNC server will ask for a password"
+        else
+            log_w "The VNC server will NOT ask for a password"
         fi
-        passwordArgument=-"-rfbauth ${passwordFilePath}"
-        log_i "The VNC server will ask for a password"
-    else
-        log_w "The VNC server will NOT ask for a password"
-    fi
 
-    x11vnc -display ${DISPLAY} -forever ${passwordArgument} &
-    wait $!
+        x11vnc -display ${DISPLAY} -forever ${passwordArgument} &
+    fi
 }
 
 run_chrome() {
@@ -91,9 +94,12 @@ run_chrome() {
     local runid=${HELENA_RUN_ID}
     local timelimit=${TIME_LIMIT_IN_HOURS:-23}
     local numruns=${NUM_RUNS_ALLOWED_PER_WORKER:-1}
+    local server=${HELENA_SERVER_URL:-"http://helena-backend.us-west-2.elasticbeanstalk.com"}
+    local batchsize=${ROW_BATCH_SIZE:-10}
     google-chrome --version
     echo Extension ID: $extensionid
-    python runHelenaDocker.py ${extensionid} ${progid} ${runid} ${timelimit} ${numruns} &
+    python runHelenaDocker.py ${extensionid} ${progid} ${runid} ${timelimit} ${numruns} ${server} ${batchsize}
+    exit $?
 }
 
 log_i() {
@@ -120,5 +126,3 @@ control_c() {
 trap control_c SIGINT SIGTERM SIGHUP
 
 main
-
-exit

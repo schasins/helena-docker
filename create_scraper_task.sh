@@ -7,7 +7,7 @@ NUM_WORKERS="$2"
 [ $# -eq 0 ] && { echo "Usage: $0 program_id num_workers"; exit 1; }
 
 EXTENSION_ID=khjmjgndbklcflgokmgdjigioindpodn
-HELENA_SERVER_URL=http://helena-server-puma.us-west-2.elasticbeanstalk.com
+HELENA_SERVER_URL=http://helena-backend.us-west-2.elasticbeanstalk.com
 AWS_ACCOUNT_ID=042666389891
 REGION=us-west-2
 INSTANCE_TYPE=t2.2xlarge
@@ -125,6 +125,8 @@ cat > /tmp/task-definition.json <<EOF
         { "name" : "HELENA_EXTENSION_ID", "value" : "$EXTENSION_ID" },
         { "name" : "HELENA_PROGRAM_ID", "value" : "$PROGRAM_ID" },
         { "name" : "HELENA_RUN_ID", "value" : "$RUN_ID" },
+        { "name" : "HELENA_SERVER_URL", "value" : "$HELENA_SERVER_URL" },
+        { "name" : "ROW_BATCH_SIZE", "value" : "1" },
         { "name" : "TIME_LIMIT_IN_HOURS", "value" : "23" },
         { "name" : "NUM_RUNS_ALLOWED_PER_WORKER", "value" : "1" },
         { "name" : "DEBUG", "value" : "1" }

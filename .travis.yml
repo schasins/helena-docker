@@ -1,0 +1,14 @@
+sudo: required
+
+services:
+  - docker
+
+env:
+  - SERVER_URL=http://helena-backend.us-west-2.elasticbeanstalk.com
+  - PROGRAM_ID=3700
+
+before_install:
+  - docker build -t helena:latest .
+
+script:
+  - ./run-ci.sh

@@ -29,6 +29,8 @@ scriptName = int(sys.argv[2])
 helenaRunId = int(sys.argv[3])
 timeoutInHours = float(sys.argv[4])
 howManyRunsToAllowPerWorker = int(sys.argv[5])
+serverUrl = sys.argv[6]
+batchSize = int(sys.argv[7])
 
 debug = bool(os.environ.get('DEBUG'))
 headless = False
@@ -41,7 +43,7 @@ if headless:
 
 def newDriver(profile):
     chrome_options = Options()
-    chrome_options.add_extension('./src.crx')
+    chrome_options.add_extension('/src.crx')
 
     desired = DesiredCapabilities.CHROME
     desired['loggingPrefs'] = {'browser': 'ALL'}
@@ -54,6 +56,9 @@ def newDriver(profile):
 
 
 def runScrapingProgramHelper(driver, progId, optionsStr):
+    driver.execute_script(
+        'RecorderUI.setGlobalConfig({"helenaServerUrl":"%s","numRowsToSendInOneSlice":%d});' % (
+            serverUrl, batchSize))
     driver.execute_script("RecorderUI.loadSavedProgram(" + str(progId) + ");")
 
     if debug:
@@ -187,12 +192,11 @@ def oneRun(programId, runId, timeoutInSeconds):
 
     # below will be true if all complete within the time limit, else false
     noErrorsRunComplete = joinProcesses([p], timeoutInSeconds)
-    return
+    return noErrorsRunComplete
 
 
 def main():
-    oneRun([scriptName], helenaRunId, int(timeoutInHours * 60 * 60))
+    return 0 if oneRun([scriptName], helenaRunId, int(timeoutInHours * 60 * 60)) else 1
 
 
-main()
-exit()
+sys.exit(main())
