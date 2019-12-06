@@ -12,6 +12,10 @@ https://www.docker.com/get-started
 
 docker run -t -p 5900:5900 -e VNC_SERVER_PASSWORD=password -e HELENA_PROGRAM_ID=2357 -e TIME_LIMIT_IN_HOURS=23 -e NUM_RUNS_ALLOWED_PER_WORKER=1 --user apps --privileged schasins/helena:latest
 
+Or if you want to pass parameters:
+
+docker run -t -p 5900:5900 -e VNC_SERVER_PASSWORD=password -e HELENA_PROGRAM_ID=2357 -e TIME_LIMIT_IN_HOURS=23 -e NUM_RUNS_ALLOWED_PER_WORKER=1  -e SCRIPT_PARAMS="foo=bar,baz=quux" --user apps --privileged schasins/helena:latest
+
 Note that this command will run slowly the first time but faster after the first run.
 
 --------------------------------------
