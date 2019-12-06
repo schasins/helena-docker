@@ -44,6 +44,8 @@ docker load --input helena-image.tar
 
 wget https://github.com/schasins/helena-docker/raw/master/helena-image.tar
 
+open vnc://localhost:5900
+
 --------------------------------------
 To push a new version to Docker Hub:
 --------------------------------------
