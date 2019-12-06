@@ -7,6 +7,7 @@ No need to even download or clone this repository!
 (1) If not yet installed, install docker: https://www.docker.com/get-started
 
 (2) Start the program with the run command, for example: docker run -t -p 5900:5900 -e VNC_SERVER_PASSWORD=password -e HELENA_PROGRAM_ID=2357 -e TIME_LIMIT_IN_HOURS=23 -e NUM_RUNS_ALLOWED_PER_WORKER=1 --user apps --privileged schasins/helena:latest
+Note that this command will run slowly the first time but faster after the first run.
 
 --------------------------------------
 Alternative quick start guide if you need to run a parallelized Helena program:
