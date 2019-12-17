@@ -1,4 +1,4 @@
-THE HELENA DOCKER INFRASTRUCTURE IS NOW INTEGRATED INTO THE MAIN HELENA REPO [https://github.com/schasins/helena](https://github.com/schasins/helena).  THIS REPO IS USEFUL FOR FINDING SOME OF THE HELENA DOCKER HISTORY, BUT IT IS NO LONGER MAINTAINED.  FOR UP-TO-DATE INFORMATION ON USING HELENA VIA DOCKER, SEE [https://github.com/schasins/helena/blob/master/readme-docker.txt](https://github.com/schasins/helena/blob/master/readme-docker.txt).
+THE HELENA DOCKER INFRASTRUCTURE IS NOW INTEGRATED INTO THE MAIN HELENA REPO https://github.com/schasins/helena.  THIS REPO IS USEFUL FOR FINDING SOME OF THE HELENA DOCKER HISTORY, BUT IT IS NO LONGER MAINTAINED.  FOR UP-TO-DATE INFORMATION ON USING HELENA VIA DOCKER, SEE https://github.com/schasins/helena/blob/master/readme-docker.txt.
 
 --------------------------------------
 Quick start guide:
